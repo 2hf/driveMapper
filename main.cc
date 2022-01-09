@@ -21,9 +21,7 @@ void enumerateDriveFiles( std::string drive ) {
         if ( dirEntry.path( ).wstring( ).find( L"\u202E" ) != std::string::npos || dirEntry.path( ).wstring( ).find( L"Windows" ) != std::string::npos || dirEntry.path( ).wstring( ).find( L"windows" ) != std::string::npos 
             || dirEntry.path( ).wstring( ).find( L"microsoft" ) != std::string::npos || dirEntry.path( ).wstring( ).find( L"Microsoft" ) != std::string::npos )
             continue;
-        auto x = dirEntry.path( ).string( );
-        std::cout << x << std::endl;
-
+        std::wcout << dirEntry.path( ).wstring( ) << std::endl;
     }
 }
 int main( int argc, char* argv[ ] )
