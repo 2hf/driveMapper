@@ -18,7 +18,7 @@ std::vector<std::string> getListOfDrives( ) {
 }
 void clearConsole( ) {
     static COORD topLeft = { 0, 0 };
-https://github.com/Unklear?tab=repositories    static HANDLE console = GetStdHandle( STD_OUTPUT_HANDLE );
+    static HANDLE console = GetStdHandle( STD_OUTPUT_HANDLE );
     SetConsoleCursorPosition( console, topLeft );
 }
 bool shouldEncryptThisEntry( std::string entry, std::vector<std::string> filters ) {
