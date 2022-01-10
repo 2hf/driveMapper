@@ -6,7 +6,6 @@
 #include <filesystem>
 #include <thread>
 #include <experimental/filesystem>
-std::vector<std::string>filesToEncrypt = {};
 std::vector<std::string> getListOfDrives( ) {
     std::vector<std::string> arrayOfDrives;
     char* szDrives = new char[ MAX_PATH ]( );
